@@ -13,6 +13,7 @@ Authors: David Mutchler, Dave Fisher, Valerie Galluzzi, Amanda Stouder,
 """  # DONE: 1. PUT YOUR NAME IN THE ABOVE LINE.
 
 import rosegraphics as rg
+import math
 
 
 # ----------------------------------------------------------------------
@@ -211,7 +212,7 @@ def draw_circles_from_rectangle(m, n, rectangle, window):
       :type window: rg.RoseWindow
     """
     # ------------------------------------------------------------------
-    # TODO: 4. Implement and test this function.
+    # DONE: 4. Implement and test this function.
     #          Tests have been written for you (above).
     #
     # CONSIDER using the ACCUMULATOR IN GRAPHICS pattern,
@@ -228,13 +229,35 @@ def draw_circles_from_rectangle(m, n, rectangle, window):
     rectangle.attach_to(window)
     for k in range(m):
         radius1 = (rectangle.corner_1.y - rectangle.corner_2.y) / 2
-        centerx = rectangle.corner_2.x  - radius1- radius1 * 2 * k
+        if rectangle.corner_1.x > rectangle.corner_2.x:
+            edge_left = rectangle.corner_2.x
+        else:
+            edge_left = rectangle.corner_1.x
+
+        centerx = edge_left - radius1- radius1 * 2 * k
         centery = rectangle.corner_2.y + radius1
         circle = rg.Circle(rg.Point(centerx,centery),radius1)
         circle.fill_color = rectangle.fill_color
         circle.attach_to(window)
         window.render()
 
+    for k in range(n):
+        radius2 = (rectangle.corner_1.x - rectangle.corner_2.x) / 2
+        if rectangle.corner_1.y > rectangle.corner_2.y:
+            edge_left = rectangle.corner_2.y
+        else:
+            edge_left = rectangle.corner_1.y
+
+        if rectangle.corner_1.x > rectangle.corner_2.x:
+            centery = edge_left - radius2 - radius2 * 2 * k
+        else:
+            centery = edge_left + radius2 + radius2 * 2 * k
+
+        centerx = rectangle.corner_2.x + radius2
+        circle = rg.Circle(rg.Point(centerx,centery),radius2)
+        circle.outline_color = rectangle.outline_color
+        circle.attach_to(window)
+        window.render()
 
 def run_test_draw_lines_from_rectangles():
     """ Tests the   draw_lines_from_rectangles  function. """
@@ -313,8 +336,8 @@ def draw_lines_from_rectangles(rectangle1, rectangle2, n, window):
       :type window: rg.RoseWindow
       """
     # ------------------------------------------------------------------
-    # TODO: 5. Implement and test this function.
-    #          Tests have been written for you (above).
+    # DONE: 5. Implement and test this function.
+    #        Tests have been written for you (above).
     #
     # CONSIDER using the ACCUMULATOR IN GRAPHICS pattern,
     #             as in   draw_row_of_circles   in m1e,
@@ -327,6 +350,32 @@ def draw_lines_from_rectangles(rectangle1, rectangle2, n, window):
     ####################################################################
     # ------------------------------------------------------------------
 
+    rectangle1.attach_to(window)
+    rectangle2.attach_to(window)
+
+    for k in range(n):
+        if rectangle1.corner_1.x > rectangle1.corner_2.x:
+            radius1x = (rectangle1.corner_1.x - rectangle1.corner_2.x) / 2
+        else:
+            radius1x = (rectangle1.corner_2.x - rectangle1.corner_1.x) / 2
+        if rectangle1.corner_1.y > rectangle1.corner_2.y:
+            radius1y = (rectangle1.corner_1.y - rectangle1.corner_2.y) / 2
+        else:
+            radius1y = (rectangle1.corner_2.y - rectangle1.corner_1.y) / 2
+
+        start = rg.Point(rectangle1.get_center().x - k * radius1x,
+                             rectangle1.get_center().y + k * radius1y)
+        end = rg.Point(rectangle2.get_center().x - k * radius1x,
+                           rectangle2.get_center().y + k * radius1y)
+
+        line = rg.Line(start,end)
+        line.thickness = 5
+        if k % 2:
+            line.color = rectangle1.outline_color
+        else:
+            line.color = rectangle2.outline_color
+        line.attach_to(window)
+        window.render()
 
 # ----------------------------------------------------------------------
 # Calls  main  to start the ball rolling.
